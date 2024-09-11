@@ -1,0 +1,28 @@
+.active > li {
+    @apply bg-orange-500 hover:bg-orange-400 text-black;
+}
+
+header {
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none; /* Ensure no shadow is applied */
+    background-color: #2d3748;
+}
+
+nav {
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none; /* Ensure no shadow is applied */
+    background-color: #2d3748; /* Ensure background color is applied */
+}
+
+li {
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none; /* Ensure no shadow is applied */
+     /* Ensure background color is applied */
+}
+
