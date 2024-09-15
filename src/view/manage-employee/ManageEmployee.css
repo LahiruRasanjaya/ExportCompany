@@ -1,0 +1,18 @@
+.fixed-column {
+    position: sticky;
+    right: 0;
+    background-color: white;
+    z-index: 2;
+}
+
+/* Optional: Style the overflow to show scrollbars */
+.table-container {
+    overflow-x: auto;
+    overflow-y: auto;
+    white-space: nowrap;
+}
+
+
+.fixed-header-table {
+    position: sticky;
+}

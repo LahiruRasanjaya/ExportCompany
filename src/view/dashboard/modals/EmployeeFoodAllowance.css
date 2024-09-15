@@ -1,0 +1,11 @@
+/*FoodAllowance.css */
+.create-profile-background-emp {
+    background-image: url('../../../assets/images/foodImg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(1); /* Make the image slightly darker */
+
+    justify-content: center;
+    align-items: center;
+}

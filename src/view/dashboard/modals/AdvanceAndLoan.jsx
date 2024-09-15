@@ -14,7 +14,7 @@ export function AdvanceAndLoan() {
     const [showLoanForm, setShowLoanForm] = useState(false);
     const [showAdvanceForm, setShowAdvanceForm] = useState(false);
     const [loanForm, setLoanForm] = useState({ amount: '', date: '', duration: '', monthlyDeduction: '', isDeductionActive: true, remainingAmount: '', name: '' });
-    const [advanceForm, setAdvanceForm] = useState({ amount: '', date: '', isDeducted: true, remainingAmount: '' });
+    const [advanceForm, setAdvanceForm] = useState({ amount: '', date: '', isDeducted: true, remainingAmount: '', monthlyDeduction: ''  });
     const [empNotes, setEmpNotes] = useState('');
     const [selectedId, setSelectedId] = useState(null);
 
@@ -399,6 +399,15 @@ export function AdvanceAndLoan() {
                                         className="border p-2"
                                         required
                                     />
+                                    <input
+                                        type="number"
+                                        name="monthlyDeduction"
+                                        placeholder="Monthly Deduction"
+                                        value={advanceForm.monthlyDeduction}
+                                        onChange={handleAdvanceFormChange}
+                                        className="border p-2"
+                                        required
+                                    />
                                     <button
                                         type="submit"
                                         className="bg-green-500 text-white py-2 px-4 rounded"
@@ -453,6 +462,7 @@ export function AdvanceAndLoan() {
                                             <p><strong>Amount:</strong> {advance.amount}</p>
                                             <p><strong>Date:</strong> {new Date(advance.date).toLocaleDateString()}</p>
                                             <p><strong>Remaining Amount:</strong> {advance.remainingAmount}</p>
+                                            <p><strong>Monthly Deduction:</strong> {advance.monthlyDeduction}</p>
                                             <button
                                                 onClick={() => toggleAdvanceDeduction(advance._id)}
                                                 className={`px-4 py-2 rounded ${advance.isDeducted ? 'bg-green-500' : 'bg-gray-500'}`}

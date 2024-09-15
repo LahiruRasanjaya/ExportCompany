@@ -273,3 +273,28 @@ export const deleteFoodConsumption = (foodConsumptionId) => {
   return axios.delete(`${BASE_URL}/api/food-consumptions/${foodConsumptionId}`);
 };
 
+// Create a new attendance record
+export const createAttendance = (formData) => {
+  return axios.post(`${BASE_URL}/api/attendance`, formData);
+};
+
+// Get all attendance records
+export const getAllAttendances = () => {
+  return axios.get(`${BASE_URL}/api/attendance`);
+};
+
+// Get a specific attendance record by ID
+export const getAttendanceById = (attendanceId) => {
+  return axios.get(`${BASE_URL}/api/attendance/${attendanceId}`);
+};
+
+// Update an existing attendance record
+export const updateAttendance = (attendanceId, formData) => {
+  return axios.put(`${BASE_URL}/api/attendance/${attendanceId}`, formData);
+};
+
+// Delete an attendance record
+export const deleteAttendance = (attendanceId) => {
+  return axios.delete(`${BASE_URL}/api/attendance/${attendanceId}`);
+};
+

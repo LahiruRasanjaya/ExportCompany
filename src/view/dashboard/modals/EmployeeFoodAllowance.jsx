@@ -414,7 +414,7 @@
 //         </div>
 //     );
 // }
-
+import './EmployeeFoodAllowance.css';
 import React, { useState, useEffect } from 'react';
 import {
     getAllEmployees,
@@ -586,7 +586,7 @@ export function EmployeeFoodAllowance() {
     };
 
     return (
-        <div className="flex">
+        <div className="flex create-profile-background-emp">
             <div className="w-1.7/3 p-4">
                 {/* Employee Food Consumption Section */}
                 <div className="p-4 bg-white shadow-md rounded-md">
