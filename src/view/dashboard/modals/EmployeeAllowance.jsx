@@ -201,7 +201,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
-import { updateEmployee, getAllEmployees } from '../../../service/ApiServices'; // Adjust the import path as needed
+import { updateEmployee, getAllEmployees, updateAllowance } from '../../../service/ApiServices'; // Adjust the import path as needed
 
 export function EmployeeAllowance() {
     const [employees, setEmployees] = useState([]);
@@ -262,7 +262,8 @@ export function EmployeeAllowance() {
 
     const handleSubmit = (employeeId) => {
         const data = formData[employeeId];
-        updateEmployee(employeeId, data)
+        console.log(data)
+        updateAllowance(employeeId, data)
             .then(() => {
                 setEditingEmployeeId(null);
                 return getAllEmployees();
@@ -313,7 +314,7 @@ export function EmployeeAllowance() {
 
     const handleBulkSubmit = () => {
         const promises = bulkData.map(emp => {
-            return updateEmployee(emp._id, {
+            return updateAllowance(emp._id, {
                 attendanceAllowance1: emp.attendanceAllowance1,
                 attendanceAllowance2: emp.attendanceAllowance2,
                 riskAllowance1: emp.riskAllowance1,

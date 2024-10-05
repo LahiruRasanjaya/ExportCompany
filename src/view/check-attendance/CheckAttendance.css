@@ -1,0 +1,47 @@
+.check-attendance {
+    display: flex;
+    height: 100vh;
+}
+
+.left-panel {
+    width: 33%;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 1px solid #ddd; /* Optional: add a separator between the panels */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Optional: add shadow for better separation */
+}
+
+.right-panel {
+    width: 67%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.employee-table, .attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.employee-table th, .attendance-table th,
+.employee-table td, .attendance-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.employee-table th, .attendance-table th {
+    background-color: #f2f2f2;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}

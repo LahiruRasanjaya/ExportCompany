@@ -1,0 +1,8 @@
+.absent-row {
+    background-color: #ffe6e6; /* Light red background to indicate absence */
+    color: #ff0000; /* Red text to make it more visible */
+}
+
+.specialDate-row {
+    background-color: #ddf3aa; /* Light red background to indicate absence */
+}

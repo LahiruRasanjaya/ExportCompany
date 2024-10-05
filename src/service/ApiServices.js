@@ -173,6 +173,10 @@ export const updateEmployee = (employeeId, formData) => {
   return axios.put(`${BASE_URL}/api/employees/${employeeId}`, formData);
 };
 
+export const updateAllowance = (employeeId, formData) => {
+  return axios.put(`${BASE_URL}/api/allowance/${employeeId}`, formData);
+};
+
 export const deleteEmployee = (employeeId) => {
   return axios.delete(`${BASE_URL}/api/employees/${employeeId}`);
 };
@@ -298,3 +302,32 @@ export const deleteAttendance = (attendanceId) => {
   return axios.delete(`${BASE_URL}/api/attendance/${attendanceId}`);
 };
 
+// Get attendance reports by employee ID and date range
+export const getAttendanceReportByDateRange = (employeeId, startDate, endDate) => {
+  return axios.get(`${BASE_URL}/api/attendance-reports/employee/${employeeId}`, {
+    params: {
+      startDate,
+      endDate,
+    },
+  });
+};
+
+// Delete an attendance report by report ID
+export const deleteAttendanceReport = (attendanceReportId) => {
+  return axios.delete(`${BASE_URL}/api/attendance-reports/${attendanceReportId}`);
+};
+
+// Get all attendance reports for a specific employee
+export const getAllAttendanceReportsForEmployee = (employeeId) => {
+  return axios.get(`${BASE_URL}/api/attendance-reports/employee/${employeeId}`);
+};
+
+// Delete attendance reports for an employee in a date range
+export const deleteAttendanceReportsByDateRange = (employeeId, startDate, endDate) => {
+  return axios.delete(`${BASE_URL}/api/attendance-reports/employee/${employeeId}`, {
+    params: {
+      startDate,
+      endDate,
+    },
+  });
+};

@@ -6,6 +6,12 @@ import {router} from "./app-router.jsx";
 import './index.css'
 // import 'animate.css';
 
+// Import Noto Sans Sinhala font
+import '@fontsource/noto-sans-sinhala'; // Import the default weight
+// Optionally, import different weights if needed
+// import '@fontsource/noto-sans-sinhala/400.css'; // Regular weight
+// import '@fontsource/noto-sans-sinhala/700.css'; // Bold weight
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={router}/>

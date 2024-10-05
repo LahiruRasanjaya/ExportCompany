@@ -44,7 +44,12 @@ export function Main() {
                 <NavLink to="items">
                     <li className="p-2 border-x
                     hover:bg-cyan-700 hover:text-white
-                    cursor-pointer">MANAGE ITEMS</li>
+                    cursor-pointer">EMPLOYEES ATTENDANCE</li>
+                </NavLink>
+                <NavLink to="checkAttendance">
+                    <li className="p-2 border-x
+                    hover:bg-cyan-700 hover:text-white
+                    cursor-pointer">CHECK ATTENDANCE</li>
                 </NavLink>
             </nav>
             <div className="flex justify-center">

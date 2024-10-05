@@ -1,602 +1,3 @@
-// import './ManageEmployee.css';
-
-// export function ManageEmployee() {
-//     return (
-//         <div className="flex">
-//             {/* Sidebar */}
-//             <aside className="w-64 bg-gray-200 p-4">
-//                 <h2 className="text-xl font-bold mb-4">Employee Management</h2>
-//                 <ul className="space-y-2">
-//                     <li>
-//                         <a href="#add-employee" className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded">Add Employee</a>
-//                     </li>
-//                     <li>
-//                         <a href="#manage-ot-hours" className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded">Manage OT Hours</a>
-//                     </li>
-//                     <li>
-//                         <a href="#remove-employee" className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded">Remove Employee</a>
-//                     </li>
-//                     <li>
-//                         <a href="#change-position" className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded">Change Employee Position</a>
-//                     </li>
-//                 </ul>
-//             </aside>
-
-//             {/* Main Content */}
-//             <main className="flex-1 p-4 text-center">
-//                 <h1 className="text-2xl font-bold pb-4">Manage Employees</h1>
-                
-//                 {/* Table */}
-//                 <table className="min-w-full divide-y divide-gray-200">
-//                     <thead className="bg-gray-50">
-//                         <tr>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Employee ID</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Name</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Email</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Phone</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Monthly Salary (LKR)</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Position</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">OT Hours</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody className="bg-white divide-y divide-gray-200">
-//                         <tr>
-//                             <td className="px-6 py-4 whitespace-nowrap">1</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">John Doe</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">johndoe@example.com</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">123-456-7890</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">100,000</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">Software Engineer</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">10</td>
-//                         </tr>
-//                         <tr>
-//                             <td className="px-6 py-4 whitespace-nowrap">2</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">Jane Smith</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">janesmith@example.com</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">987-654-3210</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">120,000</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">Project Manager</td>
-//                             <td className="px-6 py-4 whitespace-nowrap">5</td>
-//                         </tr>
-//                         {/* Add more rows as needed */}
-//                     </tbody>
-//                 </table>
-//             </main>
-//         </div>
-//     );
-// }
-
-// import React, { useState, useEffect } from 'react';
-// import './ManageEmployee.css';
-
-// export function ManageEmployee() {
-//     const [employees, setEmployees] = useState([]);
-//     const [searchQuery, setSearchQuery] = useState('');
-//     const [filteredEmployees, setFilteredEmployees] = useState([]);
-
-//     useEffect(() => {
-//         // Fetch employee data from the backend
-//         fetch('YOUR_BACKEND_API_ENDPOINT/employees') // Replace with your API endpoint
-//             .then(response => response.json())
-//             .then(data => {
-//                 setEmployees(data);
-//                 setFilteredEmployees(data);
-//             })
-//             .catch(error => console.error('Error fetching employee data:', error));
-//     }, []);
-
-//     useEffect(() => {
-//         // Filter employees based on search query
-//         const query = searchQuery.toLowerCase();
-//         const filtered = employees.filter(employee =>
-//             employee.name.toLowerCase().includes(query) ||
-//             employee.id.toString().includes(query) ||
-//             employee.position.toLowerCase().includes(query)
-//         );
-//         setFilteredEmployees(filtered);
-//     }, [searchQuery, employees]);
-
-//     return (
-//         <div className="flex flex-col p-4">
-//             {/* Search Bar */}
-//             <div className="mb-4">
-//                 <label htmlFor="search" className="block text-gray-700">Search employee name / ID / position:</label>
-//                 <input
-//                     id="search"
-//                     type="text"
-//                     placeholder="Enter search term"
-//                     value={searchQuery}
-//                     onChange={(e) => setSearchQuery(e.target.value)}
-//                     className="mt-1 p-2 border border-gray-300 rounded"
-//                 />
-//             </div>
-
-//             {/* Table */}
-//             <div className="overflow-x-auto">
-//                 <table className="min-w-full divide-y divide-gray-200">
-//                     <thead className="bg-gray-50">
-//                         <tr>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Employee ID</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Name</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Position</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">OT Rate</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">OT Hours</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Salary (LKR)</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Actions</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody className="bg-white divide-y divide-gray-200">
-//                         {filteredEmployees.map(employee => (
-//                             <tr key={employee.id}>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.id}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.name}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.position}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.otRate}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.otHours}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.salary}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">
-//                                     <button
-//                                         className="text-blue-500 hover:text-blue-700"
-//                                         onClick={() => handleEdit(employee.id)}
-//                                     >
-//                                         Edit
-//                                     </button>
-//                                 </td>
-//                             </tr>
-//                         ))}
-//                     </tbody>
-//                 </table>
-//             </div>
-//         </div>
-//     );
-// }
-
-// // Placeholder function for handling edit action
-// const handleEdit = (id) => {
-//     console.log('Edit employee with ID:', id);
-// };
-
-// import React, { useState, useEffect } from 'react';
-// import './ManageEmployee.css';
-
-// export function ManageEmployee() {
-//     const [employees, setEmployees] = useState([]);
-//     const [searchQuery, setSearchQuery] = useState('');
-//     const [filteredEmployees, setFilteredEmployees] = useState([]);
-
-//     // Dummy data
-//     const dummyData = [
-//         {
-//             id: 1,
-//             name: 'John Doe',
-//             position: 'Software Engineer',
-//             otRate: 500, // OT rate per hour
-//             otHours: 10, // Number of OT hours
-//             salary: 100000, // Fixed monthly salary
-//         },
-//         {
-//             id: 2,
-//             name: 'Jane Smith',
-//             position: 'Project Manager',
-//             otRate: 600,
-//             otHours: 5,
-//             salary: 120000,
-//         },
-//         {
-//             id: 3,
-//             name: 'Michael Brown',
-//             position: 'Data Analyst',
-//             otRate: 450,
-//             otHours: 8,
-//             salary: 90000,
-//         },
-//         {
-//             id: 4,
-//             name: 'Emily Davis',
-//             position: 'UI/UX Designer',
-//             otRate: 550,
-//             otHours: 12,
-//             salary: 110000,
-//         }
-//     ];
-
-//     useEffect(() => {
-//         // Set dummy data to state
-//         setEmployees(dummyData);
-//         setFilteredEmployees(dummyData);
-//     }, []);
-
-//     useEffect(() => {
-//         // Filter employees based on search query
-//         const query = searchQuery.toLowerCase();
-//         const filtered = employees.filter(employee =>
-//             employee.name.toLowerCase().includes(query) ||
-//             employee.id.toString().includes(query) ||
-//             employee.position.toLowerCase().includes(query)
-//         );
-//         setFilteredEmployees(filtered);
-//     }, [searchQuery, employees]);
-
-//     const calculateSalaryWithOT = (salary, otRate, otHours) => {
-//         return salary + (otRate * otHours);
-//     };
-
-//     return (
-//         <div className="flex flex-col p-4">
-//             {/* Search Bar */}
-//             <div className="mb-4">
-//                 <label htmlFor="search" className="block text-gray-700">Search employee name / ID / position:</label>
-//                 <input
-//                     id="search"
-//                     type="text"
-//                     placeholder="Enter search term"
-//                     value={searchQuery}
-//                     onChange={(e) => setSearchQuery(e.target.value)}
-//                     className="mt-1 p-2 border border-gray-300 rounded"
-//                 />
-//             </div>
-
-//             {/* Table */}
-//             <div className="overflow-x-auto">
-//                 <table className="min-w-full divide-y divide-gray-200">
-//                     <thead className="bg-gray-50">
-//                         <tr>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Employee ID</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Name</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Position</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">OT Rate</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">OT Hours</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Fixed Salary (LKR)</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Salary with OT (LKR)</th>
-//                             <th className="px-4 py-2 border text-gray-500 uppercase tracking-wider">Actions</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody className="bg-white divide-y divide-gray-200">
-//                         {filteredEmployees.map(employee => (
-//                             <tr key={employee.id}>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.id}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.name}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.position}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.otRate}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.otHours}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">{employee.salary}</td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">
-//                                     {calculateSalaryWithOT(employee.salary, employee.otRate, employee.otHours)}
-//                                 </td>
-//                                 <td className="px-6 py-4 whitespace-nowrap">
-//                                     <button
-//                                         className="text-blue-500 hover:text-blue-700"
-//                                         onClick={() => handleEdit(employee.id)}
-//                                     >
-//                                         Edit
-//                                     </button>
-//                                 </td>
-//                             </tr>
-//                         ))}
-//                     </tbody>
-//                 </table>
-//             </div>
-//         </div>
-//     );
-// }
-
-// // Placeholder function for handling edit action
-// const handleEdit = (id) => {
-//     console.log('Edit employee with ID:', id);
-// };
-
-// import React, { useState, useEffect } from 'react';
-// import './ManageEmployee.css';
-
-// export function ManageEmployee() {
-//     const [employees, setEmployees] = useState([]);
-//     const [searchQuery, setSearchQuery] = useState('');
-//     const [filteredEmployees, setFilteredEmployees] = useState([]);
-
-//     // Dummy data
-//     const dummyData = [
-//         {
-//             id: 1,
-//             name: 'John Doe',
-//             position: 'Software Engineer',
-//             otRate: 500, // OT rate per hour
-//             otHours: 10, // Number of OT hours
-//             salary: 100000, // Fixed monthly salary
-//         },
-//         {
-//             id: 2,
-//             name: 'Jane Smith',
-//             position: 'Project Manager',
-//             otRate: 600,
-//             otHours: 5,
-//             salary: 120000,
-//         },
-//         {
-//             id: 3,
-//             name: 'Michael Brown',
-//             position: 'Data Analyst',
-//             otRate: 450,
-//             otHours: 8,
-//             salary: 90000,
-//         },
-//         {
-//             id: 4,
-//             name: 'Emily Davis',
-//             position: 'UI/UX Designer',
-//             otRate: 550,
-//             otHours: 12,
-//             salary: 110000,
-//         }
-//     ];
-
-//     useEffect(() => {
-//         // Set dummy data to state
-//         setEmployees(dummyData);
-//         setFilteredEmployees(dummyData);
-//     }, []);
-
-//     useEffect(() => {
-//         // Filter employees based on search query
-//         const query = searchQuery.toLowerCase();
-//         const filtered = employees.filter(employee =>
-//             employee.name.toLowerCase().includes(query) ||
-//             employee.id.toString().includes(query) ||
-//             employee.position.toLowerCase().includes(query)
-//         );
-//         setFilteredEmployees(filtered);
-//     }, [searchQuery, employees]);
-
-//     const calculateSalaryWithOT = (salary, otRate, otHours) => {
-//         return salary + (otRate * otHours);
-//     };
-
-//     const totalPayment = filteredEmployees.reduce((acc, employee) =>
-//         acc + calculateSalaryWithOT(employee.salary, employee.otRate, employee.otHours), 0);
-
-//     const totalEmployees = filteredEmployees.length;
-
-//     return (
-//         <div className="flex flex-col p-6 bg-gray-100">
-//             {/* Page Title */}
-//             <h1 className="text-3xl font-extrabold text-gray-800 mb-6">Employee Management Dashboard</h1>
-            
-//             {/* Search Bar */}
-//             <div className="mb-6">
-//                 <label htmlFor="search" className="block text-lg font-medium text-gray-700">Search employee name / ID / position:</label>
-//                 <input
-//                     id="search"
-//                     type="text"
-//                     placeholder="Enter search term"
-//                     value={searchQuery}
-//                     onChange={(e) => setSearchQuery(e.target.value)}
-//                     className="mt-2 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                 />
-//             </div>
-
-//             {/* Main Content */}
-//             <div className="flex">
-//                 {/* Table */}
-//                 <div className="flex-1">
-//                     <div className="overflow-x-auto">
-//                         <table className="min-w-full divide-y divide-gray-300 bg-white shadow-lg rounded-lg">
-//                             <thead className="bg-blue-100 text-blue-700">
-//                                 <tr>
-//                                     <th className="px-4 py-2 border uppercase">Employee ID</th>
-//                                     <th className="px-4 py-2 border uppercase">Name</th>
-//                                     <th className="px-4 py-2 border uppercase">Position</th>
-//                                     <th className="px-4 py-2 border uppercase">OT Rate</th>
-//                                     <th className="px-4 py-2 border uppercase">OT Hours</th>
-//                                     <th className="px-4 py-2 border uppercase">Fixed Salary (LKR)</th>
-//                                     <th className="px-4 py-2 border uppercase">Salary with OT (LKR)</th>
-//                                     <th className="px-4 py-2 border uppercase">Actions</th>
-//                                 </tr>
-//                             </thead>
-//                             <tbody className="bg-white divide-y divide-gray-300">
-//                                 {filteredEmployees.map(employee => (
-//                                     <tr key={employee.id}>
-//                                         <td className="px-6 py-4 whitespace-nowrap">{employee.id}</td>
-//                                         <td className="px-6 py-4 whitespace-nowrap">{employee.name}</td>
-//                                         <td className="px-6 py-4 whitespace-nowrap">{employee.position}</td>
-//                                         <td className="px-6 py-4 whitespace-nowrap">{employee.otRate}</td>
-//                                         <td className="px-6 py-4 whitespace-nowrap">{employee.otHours}</td>
-//                                         <td className="px-6 py-4 whitespace-nowrap">{employee.salary}</td>
-//                                         <td className="px-6 py-4 whitespace-nowrap">
-//                                             {calculateSalaryWithOT(employee.salary, employee.otRate, employee.otHours)}
-//                                         </td>
-//                                         <td className="px-6 py-4 whitespace-nowrap">
-//                                             <button
-//                                                 className="text-blue-500 hover:text-blue-700"
-//                                                 onClick={() => handleEdit(employee.id)}
-//                                             >
-//                                                 Edit
-//                                             </button>
-//                                         </td>
-//                                     </tr>
-//                                 ))}
-//                             </tbody>
-//                         </table>
-//                     </div>
-//                 </div>
-
-//                 {/* Sidebar for totals */}
-//                 <div className="w-1/3 ml-6 bg-white shadow-lg rounded-lg p-4">
-//                     <h2 className="text-xl font-bold text-gray-800 mb-4">Summary</h2>
-//                     <div className="flex justify-between mb-2">
-//                         <span className="font-medium text-gray-700">Total Payment (LKR):</span>
-//                         <span className="font-bold text-gray-900">{totalPayment}</span>
-//                     </div>
-//                     <div className="flex justify-between">
-//                         <span className="font-medium text-gray-700">Total Employees:</span>
-//                         <span className="font-bold text-gray-900">{totalEmployees}</span>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-
-// // Placeholder function for handling edit action
-// const handleEdit = (id) => {
-//     console.log('Edit employee with ID:', id);
-// };
-
-// import React, { useState, useEffect } from 'react';
-// import {
-//     getAllEmployees,
-//     updateEmployee,
-// } from '../../service/ApiServices.js';  // Ensure this path is correct based on your project structure
-// import './ManageEmployee.css';
-
-
-// export function ManageEmployee() {
-//     const [employees, setEmployees] = useState([]);
-//     const [searchQuery, setSearchQuery] = useState('');
-//     const [filteredEmployees, setFilteredEmployees] = useState([]);
-//     const [editingId, setEditingId] = useState(null);
-
-//     // Fetch employees from API
-//     useEffect(() => {
-//         async function fetchEmployees() {
-//             try {
-//                 const response = await getAllEmployees(); // Using apiService function
-//                 setEmployees(response.data);
-//                 setFilteredEmployees(response.data);
-//             } catch (error) {
-//                 console.error("Error fetching employees:", error);
-//             }
-//         }
-//         fetchEmployees();
-//     }, []);
-
-//     // Filter employees based on search query
-//     useEffect(() => {
-//         const query = searchQuery.toLowerCase();
-//         const filtered = employees.filter(employee =>
-//             employee.firstName.toLowerCase().includes(query) ||
-//             employee.employeeId.toString().includes(query) ||
-//             employee.position?.toLowerCase().includes(query)
-//         );
-//         setFilteredEmployees(filtered);
-//     }, [searchQuery, employees]);
-
-//     const handleEdit = (id) => {
-//         setEditingId(id);
-//     };
-
-//     const handleSave = async (id) => {
-//         try {
-//             const updatedEmployee = employees.find(emp => emp._id === id);
-//             await updateEmployee(id, updatedEmployee); // Using apiService function
-//             setEditingId(null);
-//         } catch (error) {
-//             console.error("Error updating employee:", error);
-//         }
-//     };
-
-//     const calculateSalaryWithOT = (salaryRate, OTRate, OTHrs) => {
-//         return salaryRate + (OTRate * OTHrs);
-//     };
-
-//     const totalPayment = filteredEmployees.reduce((acc, employee) =>
-//         acc + calculateSalaryWithOT(employee.salaryRate, employee.OTRate, employee.OTHrs), 0);
-
-//     const totalEmployees = filteredEmployees.length;
-
-//     return (
-//         <div className="flex flex-col p-6 bg-gray-100">
-//             {/* Page Title */}
-//             <h1 className="text-3xl font-extrabold text-gray-800 mb-6">Employee Management Dashboard</h1>
-            
-//             {/* Search Bar */}
-//             <div className="mb-6">
-//                 <label htmlFor="search" className="block text-lg font-medium text-gray-700">Search employee name / ID / position:</label>
-//                 <input
-//                     id="search"
-//                     type="text"
-//                     placeholder="Enter search term"
-//                     value={searchQuery}
-//                     onChange={(e) => setSearchQuery(e.target.value)}
-//                     className="mt-2 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                 />
-//             </div>
-
-//             {/* Main Content */}
-//             <div className="flex">
-//                 {/* Table */}
-//                 <div className="flex-1 overflow-x-auto">
-//                     <table className="min-w-full divide-y divide-gray-300 bg-white shadow-lg rounded-lg">
-//                         <thead className="bg-blue-100 text-blue-700">
-//                             <tr>
-//                                 <th className="px-4 py-2 border uppercase">Serial No</th>
-//                                 <th className="px-4 py-2 border uppercase">Employee ID</th>
-//                                 <th className="px-4 py-2 border uppercase">Employee Name</th>
-//                                 <th className="px-4 py-2 border uppercase">Working Days</th>
-//                                 {/* Add more columns as per your requirement */}
-//                                 <th className="px-4 py-2 border uppercase">Net Salary</th>
-//                                 <th className="px-4 py-2 border uppercase">Actions</th>
-//                             </tr>
-//                         </thead>
-//                         <tbody className="bg-white divide-y divide-gray-300">
-//                             {filteredEmployees.map((employee, index) => (
-//                                 <tr key={employee._id}>
-//                                     <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
-//                                     <td className="px-6 py-4 whitespace-nowrap">{employee.employeeId}</td>
-//                                     <td className="px-6 py-4 whitespace-nowrap">{`${employee.firstName} ${employee.secondName}`}</td>
-//                                     <td className="px-6 py-4 whitespace-nowrap">{employee.workingDays}</td>
-//                                     {/* Display more columns here */}
-//                                     <td className="px-6 py-4 whitespace-nowrap">{employee.netSalary}</td>
-//                                     <td className="px-6 py-4 whitespace-nowrap fixed-column">
-//                                         {editingId === employee._id ? (
-//                                             <button
-//                                                 className="text-green-500 hover:text-green-700"
-//                                                 onClick={() => handleSave(employee._id)}
-//                                             >
-//                                                 Submit
-//                                             </button>
-//                                         ) : (
-//                                             <>
-//                                                 <button
-//                                                     className="text-blue-500 hover:text-blue-700"
-//                                                     onClick={() => handleEdit(employee._id)}
-//                                                 >
-//                                                     Edit
-//                                                 </button>
-//                                                 <button
-//                                                     className="text-purple-500 hover:text-purple-700 ml-4"
-//                                                     onClick={() => handlePaySheet(employee)}
-//                                                 >
-//                                                     Show Pay Sheet
-//                                                 </button>
-//                                             </>
-//                                         )}
-//                                     </td>
-//                                 </tr>
-//                             ))}
-//                         </tbody>
-//                     </table>
-//                 </div>
-
-//                 {/* Sidebar for totals */}
-//                 <div className="w-1/3 ml-6 bg-white shadow-lg rounded-lg p-4">
-//                     <h2 className="text-xl font-bold text-gray-800 mb-4">Summary</h2>
-//                     <div className="flex justify-between mb-2">
-//                         <span className="font-medium text-gray-700">Total Payment (LKR):</span>
-//                         <span className="font-bold text-gray-900">{totalPayment}</span>
-//                     </div>
-//                     <div className="flex justify-between">
-//                         <span className="font-medium text-gray-700">Total Employees:</span>
-//                         <span className="font-bold text-gray-900">{totalEmployees}</span>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-
-// // Placeholder function for handling pay sheet action
-// const handlePaySheet = (employee) => {
-//     console.log('Display pay sheet for employee:', employee);
-// };
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -611,6 +12,7 @@ export function ManageEmployee() {
     const [filteredEmployees, setFilteredEmployees] = useState([]);
     const [editingId, setEditingId] = useState(null);
     const [editedEmployee, setEditedEmployee] = useState({});
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
 
     // Fetch employees from API
     useEffect(() => {
@@ -641,8 +43,8 @@ export function ManageEmployee() {
         setEditingId(employee._id);
         setEditedEmployee({ ...employee }); // Set the employee's current details in the state
     };
-    const handlePaySheet = () => {
-        console.log("emp")
+    const handlePaySheet = (employee) => {
+        setSelectedEmployee(employee);
     };
     
 
@@ -661,32 +63,186 @@ export function ManageEmployee() {
         }
     };
 
-    const calculateSalaryWithOT = (salaryRate, OTRate, OTHrs) => {
-        return salaryRate + (OTRate * OTHrs);
+    const totalPayment = filteredEmployees.reduce((acc, employee) => acc + employee.netSalary, 0).toLocaleString('en-LK', { style: 'currency', currency: 'LKR', minimumFractionDigits: 2 });
+    const totalEmployees = filteredEmployees.length;
+
+    const handlePrint = () => {
+        // Get the content of the paysheet div
+        const paysheetContent = document.getElementById('paysheet-content').innerHTML;
+    
+        // Open a new window
+        const printWindow = window.open('', '', 'width=400,height=600');
+    
+        // Write the HTML content to the new window
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Print Pay Sheet</title>
+                    <style>
+                        /* Add any custom styles for the print version */
+                        body {
+                            font-family: 'Noto Sans Sinhala', sans-serif;
+                            margin: 0;
+                            padding: 20px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        th, td {
+                            border: 1px solid gray;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f4f4f4;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${paysheetContent}
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            window.close();
+                        };
+                    </script>
+                </body>
+            </html>
+        `);
+    
+        // Close the document stream to ensure it loads completely before printing
+        printWindow.document.close();
     };
 
-    const totalPayment = filteredEmployees.reduce((acc, employee) =>
-        acc + calculateSalaryWithOT(employee.salaryRate, employee.OTRate, employee.OTHrs), 0);
-
-    const totalEmployees = filteredEmployees.length;
+    const handlePrintAll = async () => {
+        // Prepare the content for all pay sheets
+        const paysheetContents = employees.map(employee => createPaysheetContent(employee)).join('');
+    
+        // Print the paysheets to the thermal printer
+        await printToThermalPrinter(paysheetContents);
+    }
+    
+    // Function to create the paysheet content for an employee
+    const createPaysheetContent = (employee) => {
+        return `
+            <div style="margin-bottom: 20px; page-break-after: always;">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">වැටුප් පත්‍රය - ${employee.firstName} ${employee.secondName}</h2>
+                <table class="table-auto border-collapse w-full">
+                    <thead>
+                        <tr>
+                            <th class="border border-gray-300 p-2">ක්ෂේත‍්‍රය</th>
+                            <th class="border border-gray-300 p-2">අගය</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${createPaysheetRows(employee)}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+    
+    // Function to create the rows of the paysheet
+    const createPaysheetRows = (employee) => {
+        const month = new Date().toLocaleString('default', { month: 'long' });
+        const advancesTotal = employee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0);
+        const loansTotal = employee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0);
+        const foodConsumptionTotal = employee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0);
+        const deductionsTotal = advancesTotal + loansTotal + foodConsumptionTotal + employee.EPF;
+    
+        return `
+            <tr><td class="border border-gray-300 p-2">සේවකයාගේ නම</td><td class="border border-gray-300 p-2">${employee.firstName} ${employee.secondName}</td></tr>
+            <tr><td class="border border-gray-300 p-2">සේවක අංකය</td><td class="border border-gray-300 p-2">${employee.employeeId}</td></tr>
+            <tr><td class="border border-gray-300 p-2">මාසය</td><td class="border border-gray-300 p-2">${month}</td></tr>
+            <tr><td class="border border-gray-300 p-2">කටයුතු කළ දින</td><td class="border border-gray-300 p-2">${employee.workingDays}</td></tr>
+            <tr><td class="border border-gray-300 p-2">උපරිම ආදායම්</td><td class="border border-gray-300 p-2">${employee.OTEarning.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">ආදායම් ලැබීම්</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">දුණු සංගම ආදායම්</td><td class="border border-gray-300 p-2">${employee.doubleShiftEarning.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">ආපසුගිය භාණ්ඩ</td><td class="border border-gray-300 p-2">${(employee.attendanceAllowance1 + employee.attendanceAllowance2).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අවදානම් භාණ්ඩ</td><td class="border border-gray-300 p-2">${(employee.riskAllowance1 + employee.riskAllowance2).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">කොළඹ භාණ්ඩ</td><td class="border border-gray-300 p-2">${employee.colomboAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">මුළු වැටුප</td><td class="border border-gray-300 p-2">${employee.grossSalary.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අත්‍යාවශ්‍ය දීමනා</td><td class="border border-gray-300 p-2">${advancesTotal.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">ණය</td><td class="border border-gray-300 p-2">${loansTotal.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">ආහාර පරිභෝජනය</td><td class="border border-gray-300 p-2">${foodConsumptionTotal.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">EPF</td><td class="border border-gray-300 p-2">${employee.EPF.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">මුළු අඩුකම්</td><td class="border border-gray-300 p-2">${deductionsTotal.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">නිවැරදි වැටුප</td><td class="border border-gray-300 p-2">${employee.netSalary.toFixed(2)}</td></tr>
+        `;
+    }
+    
+    // Function to print content to the thermal printer
+    const printToThermalPrinter = async (content) => {
+        // Create a new window for printing
+        const printWindow = window.open('', '', 'width=400,height=400');
+    
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Print Pay Sheet</title>
+                    <style>
+                        body {
+                            font-family: 'Noto Sans Sinhala', sans-serif;
+                            margin: 0;
+                            padding: 20px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        td {
+                            border: 1px solid gray;
+                            padding: 8px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${content}
+                </body>
+                <script>
+                    window.onload = function() {
+                        window.print();
+                        window.close();
+                    };
+                </script>
+            </html>
+        `);
+        
+        printWindow.document.close();
+    }
+    
+    
 
     return (
         <div className="flex p-6 bg-gray-100 w-full">
             <div className="w-3/4 p-4">
-                {/* Page Title */}
-                <h1 className="text-3xl font-extrabold text-gray-800 mb-6">Employee Management Dashboard</h1>
+
+                <div className="flex space-x-6 mb-6">
+                    <div className="flex-2/3 w-2/3">
+                        <h1 className="text-3xl font-extrabold text-gray-800 mb-6">Employee Management Dashboard</h1>
                 
-                {/* Search Bar */}
-                <div className="mb-6">
-                    <label htmlFor="search" className="block text-lg font-medium text-gray-700">Search employee name / ID / position:</label>
-                    <input
-                        id="search"
-                        type="text"
-                        placeholder="Enter search term"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="mt-2 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                        <label htmlFor="search" className="block text-lg font-medium text-gray-700">
+                            Search employee name / ID / position:
+                        </label>
+                        <input
+                            id="search"
+                            type="text"
+                            placeholder="Enter search term"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="mt-2 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                        />
+                    </div>
+                    <div className="w-1/3 bg-white p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl font-bold text-gray-800 mb-4">Employee Summary</h2>
+                        <p className="text-gray-700">
+                            Total Employees: <span className="font-semibold">{totalEmployees}</span>
+                        </p>
+                        <p className="text-gray-700">
+                            Total Monthly Payment: <span className="font-semibold">{totalPayment}</span>
+                        </p>
+                    </div>
                 </div>
 
                 {/* Main Content */}
@@ -977,10 +533,10 @@ export function ManageEmployee() {
                                         </td>
                                         
                                         <td className="border border-gray-300 p-2">
-                                            {employee.advances.reduce((total, advance) => total + advance.amount, 0).toFixed(2)}
+                                            {employee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0).toFixed(2)}
                                         </td>
                                         <td className="border border-gray-300 p-2">
-                                            {employee.loans.reduce((total, loan) => total + loan.amount, 0).toFixed(2)}
+                                            {employee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0).toFixed(2)}
                                         </td>
                                         <td className="border border-gray-300 p-2">
                                             {employee.foodConsumptionRecords.reduce((acc, record) => acc + record.totalAmount, 0).toFixed(2)}
@@ -1049,29 +605,127 @@ export function ManageEmployee() {
                                 ))}
                             </tbody>
                         </table>
+                        <button
+                            className="bg-blue-500 text-white py-2 px-4 rounded border-t-8 mt-4"
+                            onClick={handlePrintAll}
+                        >
+                            සියලු වැටුප් පත්‍රය මුද්‍රණය කරන්න {/* Print All Pay Sheets */}
+                        </button>
                     </div>
                 </div>
             </div>
-            <div className="w-1/4 p-4">
-                {/* Sidebar */}
+            <div  className="w-1/4 p-4 sinhala-font"> {/* Apply the sinhala-font class here */}
                 <div className="ml-8">
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-bold text-gray-800 mb-4">Employee Summary</h2>
-                        <p className="text-gray-700">
-                            Total Employees: <span className="font-semibold">{totalEmployees}</span>
-                        </p>
-                        <p className="text-gray-700">
-                            Total Monthly Payment: <span className="font-semibold">{totalPayment}</span>
-                        </p>
+                    <div id="paysheet-content" className="bg-white p-6 rounded-lg shadow-md">
+                        {selectedEmployee ? (
+                            <div className="text-gray-700">
+                                <h2 class="text-xl font-bold text-gray-800 mb-4">වැටුප් පත්‍රය - ${selectedEmployee.firstName} ${selectedEmployee.secondName}</h2>
+                                <table className="table-auto border-collapse w-full">
+                                    <thead>
+                                        <tr>
+                                            <th className="border border-gray-300 p-2">ක්ෂේත‍්‍රය</th> {/* Field */}
+                                            <th className="border border-gray-300 p-2">අගය</th> {/* Value */}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2"> සේවකයාගේ නම </td> {/* Employee Name */}
+                                            <td className="border border-gray-300 p-2">{`${selectedEmployee.firstName} ${selectedEmployee.secondName}`}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2"> සේවක අංකය </td> {/* Employee Number */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.employeeId}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2"> මාසය </td> {/* Month */}
+                                            <td className="border border-gray-300 p-2">{new Date().toLocaleString('default', { month: 'long' })}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2"> කටයුතු කළ දින </td> {/* Working Days */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.workingDays}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">උපරිම ආදායම් </td> {/* OT Earnings */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.OTEarning.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">ආදායම් ලැබීම් </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">දුණු සංගම ආදායම් </td> {/* Double Shift Earnings */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.doubleShiftEarning.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">ආපසුගිය භාණ්ඩ </td> {/* Attendance Allowance */}
+                                            <td className="border border-gray-300 p-2">{(selectedEmployee.attendanceAllowance1 + selectedEmployee.attendanceAllowance2).toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">අවදානම් භාණ්ඩ </td> {/* Risk Allowance */}
+                                            <td className="border border-gray-300 p-2">{(selectedEmployee.riskAllowance1 + selectedEmployee.riskAllowance2).toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">කොළඹ භාණ්ඩ </td> {/* Colombo Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.colomboAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">මුළු වැටුප </td> {/* Gross Salary */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.grossSalary.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">අත්‍යාවශ්‍ය දීමනා </td> {/* Advances */}
+                                            <td className="border border-gray-300 p-2">
+                                                {selectedEmployee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0).toFixed(2)}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">ණය </td> {/* Loans */}
+                                            <td className="border border-gray-300 p-2">
+                                                {selectedEmployee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0).toFixed(2)}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">ආහාර පරිභෝජනය </td> {/* Food Consumption */}
+                                            <td className="border border-gray-300 p-2">
+                                                {selectedEmployee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0).toFixed(2)}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">EPF </td> {/* EPF */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.EPF.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">මුළු අඩුකම් </td> {/* Total Deductions */}
+                                            <td className="border border-gray-300 p-2">
+                                                {(
+                                                    parseFloat(selectedEmployee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0)) +
+                                                    parseFloat(selectedEmployee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0)) +
+                                                    parseFloat(selectedEmployee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0)) +
+                                                    parseFloat(selectedEmployee.EPF)
+                                                ).toFixed(2)}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">නිවැරදි වැටුප </td> {/* Net Salary */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.netSalary.toFixed(2)}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <p className="text-gray-500">සේවකයෙකු තෝරාගෙන වැටුප් පත්‍රය බලන්න.</p> 
+                        )}
                     </div>
-                    <button
-                        onClick={handlePaySheet}
-                        className="bg-green-500 text-white py-2 px-4 rounded border-t-8"
-                    >
-                        Print Pay Sheet
-                    </button>
+                    {selectedEmployee && (
+                        <button
+                            onClick={() => handlePrint()}
+                            className="bg-green-500 text-white py-2 px-4 rounded border-t-8 mt-4"
+                        >
+                            වැටුප් පත්‍රය මුද්‍රණය කරන්න {/* Print Pay Sheet */}
+                        </button>
+                    )}
                 </div>
             </div>
-        </div>
+        </div>   
     );
 }

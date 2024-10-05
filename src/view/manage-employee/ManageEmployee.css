@@ -16,3 +16,8 @@
 .fixed-header-table {
     position: sticky;
 }
+
+.sinhala-font {
+    font-family: 'Noto Sans Sinhala', sans-serif; /* Apply the Sinhala font */
+}
+
