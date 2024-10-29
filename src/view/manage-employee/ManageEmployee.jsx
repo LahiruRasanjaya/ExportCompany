@@ -12,7 +12,13 @@ export function ManageEmployee() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredEmployees, setFilteredEmployees] = useState([]);
     const [editingId, setEditingId] = useState(null);
-    const [editedEmployee, setEditedEmployee] = useState({});
+    // const [editedEmployee, setEditedEmployee] = useState({});
+    const [editedEmployee, setEditedEmployee] = useState({
+        OTHrs: 0.00, // Default to 0 for OTHrs
+        workingDays: 0.00, // Default value for other fields
+        salaryRate: 0.00,
+        // Add other fields with default values here as needed
+    });
     const [selectedEmployee, setSelectedEmployee] = useState(null);
 
     // Fetch employees from API
@@ -51,18 +57,31 @@ export function ManageEmployee() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-    
-        // Check if value is null or an empty string, and show a warning message if so
-        if (value === null || value === '') {
-            alert("Null or empty values cannot be updated."); // Display a warning message
-            return; // Exit the function without updating
-        }
-    
         setEditedEmployee({ ...editedEmployee, [name]: value });
     };
 
+    // const handleSave = async (id) => {
+    //     try {
+    //         await updateEmployee(id, editedEmployee); // Update the employee with the edited details
+    //         setEmployees(employees.map(emp => emp._id === id ? editedEmployee : emp));
+    //         setEditingId(null);
+    //     } catch (error) {
+    //         console.error("Error updating employee:", error);
+    //     }
+    // };
+
     const handleSave = async (id) => {
         try {
+            // Check for null or empty string values in editedEmployee
+            const hasNullValues = Object.entries(editedEmployee).some(
+                ([key, value]) => value === null || value === ''
+            );
+    
+            if (hasNullValues) {
+                alert("Null or empty values cannot be updated."); // Show alert for null values
+                return; // Exit the function without saving
+            }
+    
             await updateEmployee(id, editedEmployee); // Update the employee with the edited details
             setEmployees(employees.map(emp => emp._id === id ? editedEmployee : emp));
             setEditingId(null);
@@ -70,6 +89,7 @@ export function ManageEmployee() {
             console.error("Error updating employee:", error);
         }
     };
+    
 
     const totalPayment = filteredEmployees.reduce((acc, employee) => acc + employee.netSalary, 0).toLocaleString('en-LK', { style: 'currency', currency: 'LKR', minimumFractionDigits: 2 });
     const totalEmployees = filteredEmployees.length;
@@ -191,56 +211,56 @@ export function ManageEmployee() {
         return `
             <tr><td class="border border-gray-300 " style="font-size: 7px;">පැමිණි දිනය</td><td class="border border-gray-300 p-1" style="font-size: 7px;">${employee.workingDays}</td></tr>
             <tr><td class="border border-gray-300 ">අතිකාල</td><td class="border border-gray-300 ">${employee.OTEarning.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-1">පැමිණීමේ දීමනාව</td><td class="border border-gray-300 p-2">${(selectedEmployee.attendanceAllowance1 + selectedEmployee.attendanceAllowance2).toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">අයවැය දීමනාව</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">අමතර අත්තම්</td><td class="border border-gray-300 p-2">${selectedEmployee.doubleShiftEarning.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">දිරි දීමනාව</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">අවදානම් දීමනාව</td><td class="border border-gray-300 p-2">${(selectedEmployee.riskAllowance1 + selectedEmployee.riskAllowance2).toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">කොළඹ</td><td class="border border-gray-300 p-2">${selectedEmployee.colomboAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-1">පැමිණීමේ දීමනාව</td><td class="border border-gray-300 p-2">${(employee.attendanceAllowance1 + employee.attendanceAllowance2).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අයවැය දීමනාව</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අමතර අත්තම්</td><td class="border border-gray-300 p-2">${employee.doubleShiftEarning.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">දිරි දීමනාව</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අවදානම් දීමනාව</td><td class="border border-gray-300 p-2">${(employee.riskAllowance1 + employee.riskAllowance2).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">කොළඹ</td><td class="border border-gray-300 p-2">${employee.colomboAllowance.toFixed(2)}</td></tr>
             <tr>
                 <td className="border border-gray-300 p-2" colSpan="2"></td>
             </tr>
             <tr>
                 <td className="border border-gray-300 p-2"> දළ වැටුප </td> 
-                <td className="border border-gray-300 p-2">${((selectedEmployee.colomboAllowance)+
-                (selectedEmployee.riskAllowance1 + selectedEmployee.riskAllowance2)+
-                (selectedEmployee.incomeAllowance)+
-                (selectedEmployee.doubleShiftEarning)+
-                (selectedEmployee.incomeAllowance)+
-                (selectedEmployee.attendanceAllowance1 + selectedEmployee.attendanceAllowance2)+
-                (selectedEmployee.OTEarning)).toFixed(2)}
+                <td className="border border-gray-300 p-2">${((employee.colomboAllowance)+
+                (employee.riskAllowance1 + employee.riskAllowance2)+
+                (employee.incomeAllowance)+
+                (employee.doubleShiftEarning)+
+                (employee.incomeAllowance)+
+                (employee.attendanceAllowance1 + employee.attendanceAllowance2)+
+                (employee.OTEarning)).toFixed(2)}
                 <div className="border-b border-black mt-1 underline"></div>
                 </td>
             </tr>
             <tr>
                 <td className="border border-gray-300 p-2" colSpan="2"></td>
             </tr>
-            <tr><td class="border border-gray-300 p-2">අර්ථ සාදක</td><td class="border border-gray-300 p-2">${selectedEmployee.EPF.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">අත්තිකාරම්</td><td class="border border-gray-300 p-2">${selectedEmployee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0).toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">බැංකු ගිණුම් සඳහා </td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">ණය මුදල</td><td class="border border-gray-300 p-2">${selectedEmployee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0).toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">පසුගිය හිඟ</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">කෑම සඳහා </td><td class="border border-gray-300 p-2">${selectedEmployee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0).toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">අවුරුදු අත්තිකාරම්</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">රුහුනු සංවර්ධන ණය</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">රඳවා ගැනීම්</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">බෝනස්</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">සමිති</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">පොත් ණය</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අර්ථ සාදක</td><td class="border border-gray-300 p-2">${employee.EPF.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අත්තිකාරම්</td><td class="border border-gray-300 p-2">${employee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">බැංකු ගිණුම් සඳහා </td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">ණය මුදල</td><td class="border border-gray-300 p-2">${employee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">පසුගිය හිඟ</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">කෑම සඳහා </td><td class="border border-gray-300 p-2">${employee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අවුරුදු අත්තිකාරම්</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">රුහුනු සංවර්ධන ණය</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">රඳවා ගැනීම්</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">බෝනස්</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">සමිති</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">පොත් ණය</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
             <tr>
                 <td className="border border-gray-300 p-2" colSpan="2"></td>
             </tr>
             <tr><td class="border border-gray-300 p-2">මුළු අඩුකිරීම්</td><td class="border border-gray-300 p-2">${(
-                parseFloat(selectedEmployee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0)) +
-                parseFloat(selectedEmployee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0)) +
-                parseFloat(selectedEmployee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0)) +
-                parseFloat(selectedEmployee.EPF)
+                parseFloat(employee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0)) +
+                parseFloat(employee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0)) +
+                parseFloat(employee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0)) +
+                parseFloat(employee.EPF)
             ).toFixed(2)}</td></tr>
             <tr>
                 <td className="border border-gray-300 p-2" colSpan="2"></td>
             </tr>
             <tr>
-                <td class="border border-gray-300 p-2">ශුද්ධ වැටුප</td><td class="border border-gray-300 p-2">${selectedEmployee.netSalary.toFixed(2)}
+                <td class="border border-gray-300 p-2">ශුද්ධ වැටුප</td><td class="border border-gray-300 p-2">${employee.netSalary.toFixed(2)}
                     <div className="border-b border-black mt-1"></div>
                     <div className="border-b border-black mt-1"></div> 
                 </td>
