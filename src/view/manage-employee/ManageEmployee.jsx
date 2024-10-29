@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {
     getAllEmployees,
     updateEmployee,
+    updateLatMonth,
 } from '../../service/ApiServices.js';  // Ensure this path is correct based on your project structure
 import './ManageEmployee.css';
 
@@ -26,7 +27,7 @@ export function ManageEmployee() {
             }
         }
         fetchEmployees();
-    }, []);
+    }, [employees]);
 
     // Filter employees based on search query
     useEffect(() => {
@@ -37,7 +38,7 @@ export function ManageEmployee() {
             employee.position?.toLowerCase().includes(query)
         );
         setFilteredEmployees(filtered);
-    }, [searchQuery, employees]);
+    }, [searchQuery]);
 
     const handleEdit = (employee) => {
         setEditingId(employee._id);
@@ -50,6 +51,13 @@ export function ManageEmployee() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+    
+        // Check if value is null or an empty string, and show a warning message if so
+        if (value === null || value === '') {
+            alert("Null or empty values cannot be updated."); // Display a warning message
+            return; // Exit the function without updating
+        }
+    
         setEditedEmployee({ ...editedEmployee, [name]: value });
     };
 
@@ -70,8 +78,8 @@ export function ManageEmployee() {
         // Get the content of the paysheet div
         const paysheetContent = document.getElementById('paysheet-content').innerHTML;
     
-        // Open a new window
-        const printWindow = window.open('', '', 'width=400,height=600');
+        // Open a new window with dimensions closer to receipt paper size
+        const printWindow = window.open('', '', 'width=250,height=600'); // Adjust width for receipt paper
     
         // Write the HTML content to the new window
         printWindow.document.write(`
@@ -79,11 +87,12 @@ export function ManageEmployee() {
                 <head>
                     <title>Print Pay Sheet</title>
                     <style>
-                        /* Add any custom styles for the print version */
+                        /* Simplified styles for receipt printer */
                         body {
                             font-family: 'Noto Sans Sinhala', sans-serif;
                             margin: 0;
-                            padding: 20px;
+                            padding: 10px;
+                            font-size: 10px; /* Smaller font for receipt */
                         }
                         table {
                             width: 100%;
@@ -91,11 +100,20 @@ export function ManageEmployee() {
                         }
                         th, td {
                             border: 1px solid gray;
-                            padding: 8px;
+                            padding: 4px; /* Reduced padding */
                             text-align: left;
+                            font-size: 9px; /* Smaller font for table content */
                         }
                         th {
                             background-color: #f4f4f4;
+                            font-size: 9px;
+                        }
+                        .underline {
+                            border-bottom: 2px solid black; /* Line style */
+                            margin-top: 2px; /* Space between text and line */
+                        }
+                        .center {
+                            text-align: center; /* Center text */
                         }
                     </style>
                 </head>
@@ -103,8 +121,8 @@ export function ManageEmployee() {
                     ${paysheetContent}
                     <script>
                         window.onload = function() {
-                            window.print();
-                            window.close();
+                            window.print();  // Trigger print dialog
+                            window.close();  // Automatically close the window after printing
                         };
                     </script>
                 </body>
@@ -114,28 +132,48 @@ export function ManageEmployee() {
         // Close the document stream to ensure it loads completely before printing
         printWindow.document.close();
     };
+    
 
     const handlePrintAll = async () => {
-        // Prepare the content for all pay sheets
-        const paysheetContents = employees.map(employee => createPaysheetContent(employee)).join('');
+        try {
+            // Prepare the content for all pay sheets
+            const paysheetContents = employees.map(employee => createPaysheetContent(employee)).join('');
+            
+            // Print the paysheets to the thermal printer
+            await printToThermalPrinter(paysheetContents);
+            
+            // Call the updateLatMonth function after printing
+            const response = await updateLatMonth();
+            console.log(response.data.message); // Optionally log the success message
     
-        // Print the paysheets to the thermal printer
-        await printToThermalPrinter(paysheetContents);
-    }
+        } catch (error) {
+            console.error('Error during printing or updating monthly records:', error.response ? error.response.data.message : error.message);
+        }
+    };
     
     // Function to create the paysheet content for an employee
     const createPaysheetContent = (employee) => {
+        const month = new Date().toLocaleString('default', { month: 'long' });
         return `
             <div style="margin-bottom: 20px; page-break-after: always;">
-                <h2 class="text-xl font-bold text-gray-800 mb-4">වැටුප් පත්‍රය - ${employee.firstName} ${employee.secondName}</h2>
+                <h2 class="text-xl font-bold text-gray-800 mb-4 center">ඩීඑම්සී පලයිවුඩ් - වැටුප් පත්‍රිකාව</h2>
+                <table class="table-auto border-collapse w-full">
                 <table class="table-auto border-collapse w-full">
                     <thead>
                         <tr>
-                            <th class="border border-gray-300 p-2">ක්ෂේත‍්‍රය</th>
-                            <th class="border border-gray-300 p-2">අගය</th>
+                            <th class="border border-gray-300 p-2" style="font-size: 9px;">සේවකයාගේ නම :</th>
+                            <th class="border border-gray-300 p-2" style="font-size: 9px;">${employee.firstName} ${employee.secondName}</th>
+                        </tr>
+                        <tr>
+                            <th class="border border-gray-300 p-2" style="font-size: 9px;">සේවක අංකය :</th>
+                            <th class="border border-gray-300 p-2" style="font-size: 9px;">${employee.employeeId}</th>
+                        </tr>
+                        <tr>
+                            <th class="border border-gray-300 p-2" style="font-size: 9px;">මාසය :</th>
+                            <th class="border border-gray-300 p-2" style="font-size: 9px;">${month}</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody style="font-size: 2px;">
                         ${createPaysheetRows(employee)}
                     </tbody>
                 </table>
@@ -145,30 +183,68 @@ export function ManageEmployee() {
     
     // Function to create the rows of the paysheet
     const createPaysheetRows = (employee) => {
-        const month = new Date().toLocaleString('default', { month: 'long' });
         const advancesTotal = employee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0);
         const loansTotal = employee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0);
         const foodConsumptionTotal = employee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0);
         const deductionsTotal = advancesTotal + loansTotal + foodConsumptionTotal + employee.EPF;
     
         return `
-            <tr><td class="border border-gray-300 p-2">සේවකයාගේ නම</td><td class="border border-gray-300 p-2">${employee.firstName} ${employee.secondName}</td></tr>
-            <tr><td class="border border-gray-300 p-2">සේවක අංකය</td><td class="border border-gray-300 p-2">${employee.employeeId}</td></tr>
-            <tr><td class="border border-gray-300 p-2">මාසය</td><td class="border border-gray-300 p-2">${month}</td></tr>
-            <tr><td class="border border-gray-300 p-2">කටයුතු කළ දින</td><td class="border border-gray-300 p-2">${employee.workingDays}</td></tr>
-            <tr><td class="border border-gray-300 p-2">උපරිම ආදායම්</td><td class="border border-gray-300 p-2">${employee.OTEarning.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">ආදායම් ලැබීම්</td><td class="border border-gray-300 p-2">${employee.incomeAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">දුණු සංගම ආදායම්</td><td class="border border-gray-300 p-2">${employee.doubleShiftEarning.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">ආපසුගිය භාණ්ඩ</td><td class="border border-gray-300 p-2">${(employee.attendanceAllowance1 + employee.attendanceAllowance2).toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">අවදානම් භාණ්ඩ</td><td class="border border-gray-300 p-2">${(employee.riskAllowance1 + employee.riskAllowance2).toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">කොළඹ භාණ්ඩ</td><td class="border border-gray-300 p-2">${employee.colomboAllowance.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">මුළු වැටුප</td><td class="border border-gray-300 p-2">${employee.grossSalary.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">අත්‍යාවශ්‍ය දීමනා</td><td class="border border-gray-300 p-2">${advancesTotal.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">ණය</td><td class="border border-gray-300 p-2">${loansTotal.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">ආහාර පරිභෝජනය</td><td class="border border-gray-300 p-2">${foodConsumptionTotal.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">EPF</td><td class="border border-gray-300 p-2">${employee.EPF.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">මුළු අඩුකම්</td><td class="border border-gray-300 p-2">${deductionsTotal.toFixed(2)}</td></tr>
-            <tr><td class="border border-gray-300 p-2">නිවැරදි වැටුප</td><td class="border border-gray-300 p-2">${employee.netSalary.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 " style="font-size: 7px;">පැමිණි දිනය</td><td class="border border-gray-300 p-1" style="font-size: 7px;">${employee.workingDays}</td></tr>
+            <tr><td class="border border-gray-300 ">අතිකාල</td><td class="border border-gray-300 ">${employee.OTEarning.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-1">පැමිණීමේ දීමනාව</td><td class="border border-gray-300 p-2">${(selectedEmployee.attendanceAllowance1 + selectedEmployee.attendanceAllowance2).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අයවැය දීමනාව</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අමතර අත්තම්</td><td class="border border-gray-300 p-2">${selectedEmployee.doubleShiftEarning.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">දිරි දීමනාව</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අවදානම් දීමනාව</td><td class="border border-gray-300 p-2">${(selectedEmployee.riskAllowance1 + selectedEmployee.riskAllowance2).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">කොළඹ</td><td class="border border-gray-300 p-2">${selectedEmployee.colomboAllowance.toFixed(2)}</td></tr>
+            <tr>
+                <td className="border border-gray-300 p-2" colSpan="2"></td>
+            </tr>
+            <tr>
+                <td className="border border-gray-300 p-2"> දළ වැටුප </td> 
+                <td className="border border-gray-300 p-2">${((selectedEmployee.colomboAllowance)+
+                (selectedEmployee.riskAllowance1 + selectedEmployee.riskAllowance2)+
+                (selectedEmployee.incomeAllowance)+
+                (selectedEmployee.doubleShiftEarning)+
+                (selectedEmployee.incomeAllowance)+
+                (selectedEmployee.attendanceAllowance1 + selectedEmployee.attendanceAllowance2)+
+                (selectedEmployee.OTEarning)).toFixed(2)}
+                <div className="border-b border-black mt-1 underline"></div>
+                </td>
+            </tr>
+            <tr>
+                <td className="border border-gray-300 p-2" colSpan="2"></td>
+            </tr>
+            <tr><td class="border border-gray-300 p-2">අර්ථ සාදක</td><td class="border border-gray-300 p-2">${selectedEmployee.EPF.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අත්තිකාරම්</td><td class="border border-gray-300 p-2">${selectedEmployee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">බැංකු ගිණුම් සඳහා </td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">ණය මුදල</td><td class="border border-gray-300 p-2">${selectedEmployee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">පසුගිය හිඟ</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">කෑම සඳහා </td><td class="border border-gray-300 p-2">${selectedEmployee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0).toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">අවුරුදු අත්තිකාරම්</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">රුහුනු සංවර්ධන ණය</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">රඳවා ගැනීම්</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">බෝනස්</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">සමිති</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr><td class="border border-gray-300 p-2">පොත් ණය</td><td class="border border-gray-300 p-2">${selectedEmployee.incomeAllowance.toFixed(2)}</td></tr>
+            <tr>
+                <td className="border border-gray-300 p-2" colSpan="2"></td>
+            </tr>
+            <tr><td class="border border-gray-300 p-2">මුළු අඩුකිරීම්</td><td class="border border-gray-300 p-2">${(
+                parseFloat(selectedEmployee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0)) +
+                parseFloat(selectedEmployee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0)) +
+                parseFloat(selectedEmployee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0)) +
+                parseFloat(selectedEmployee.EPF)
+            ).toFixed(2)}</td></tr>
+            <tr>
+                <td className="border border-gray-300 p-2" colSpan="2"></td>
+            </tr>
+            <tr>
+                <td class="border border-gray-300 p-2">ශුද්ධ වැටුප</td><td class="border border-gray-300 p-2">${selectedEmployee.netSalary.toFixed(2)}
+                    <div className="border-b border-black mt-1"></div>
+                    <div className="border-b border-black mt-1"></div> 
+                </td>
+            </tr>
         `;
     }
     
@@ -185,7 +261,8 @@ export function ManageEmployee() {
                         body {
                             font-family: 'Noto Sans Sinhala', sans-serif;
                             margin: 0;
-                            padding: 20px;
+                            padding: 4px;
+                            font-size: 8px;
                         }
                         table {
                             width: 100%;
@@ -193,7 +270,15 @@ export function ManageEmployee() {
                         }
                         td {
                             border: 1px solid gray;
-                            padding: 8px;
+                            padding: 4px;
+                            font-size: 7px;
+                        }
+                        .underline {
+                            border-bottom: 2px solid black; /* Line style */
+                            margin-top: 2px; /* Space between text and line */
+                        }
+                        .center {
+                            text-align: center; /* Center text */
                         }
                     </style>
                 </head>
@@ -333,7 +418,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.salaryRate
+                                                employee.salaryRate.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -346,7 +431,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.monthPayment
+                                                employee.monthPayment.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -359,7 +444,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.OTHrs
+                                                employee.OTHrs.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -372,7 +457,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.OTRate
+                                                employee.OTRate.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -385,7 +470,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.OTEarning
+                                                employee.OTEarning.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -398,7 +483,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.incomeAllowance
+                                                employee.incomeAllowance.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -424,7 +509,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.doubleShiftEarning
+                                                employee.doubleShiftEarning.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -437,7 +522,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.attendanceAllowance1
+                                                employee.attendanceAllowance1.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -450,7 +535,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.attendanceAllowance2
+                                                employee.attendanceAllowance2.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -463,7 +548,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.riskAllowance1
+                                                employee.riskAllowance1.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -476,7 +561,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.riskAllowance2
+                                                employee.riskAllowance2.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -489,7 +574,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.colomboAllowance
+                                                employee.colomboAllowance.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -502,7 +587,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.attendance25
+                                                employee.attendance25.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -515,7 +600,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.grossSalary
+                                                employee.grossSalary.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -528,7 +613,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.EPF
+                                                employee.EPF.toFixed(2)
                                             )}
                                         </td>
                                         
@@ -552,7 +637,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.totalDeduction
+                                                employee.totalDeduction.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap border">
@@ -565,7 +650,7 @@ export function ManageEmployee() {
                                                     className="border border-gray-300 rounded-lg p-2"
                                                 />
                                             ) : (
-                                                employee.netSalary
+                                                employee.netSalary.toFixed(2)
                                             )}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap fixed-column border">
@@ -605,97 +690,151 @@ export function ManageEmployee() {
                                 ))}
                             </tbody>
                         </table>
-                        <button
-                            className="bg-blue-500 text-white py-2 px-4 rounded border-t-8 mt-4"
-                            onClick={handlePrintAll}
-                        >
-                            සියලු වැටුප් පත්‍රය මුද්‍රණය කරන්න {/* Print All Pay Sheets */}
-                        </button>
+                        
                     </div>
                 </div>
+                <button
+                    className="bg-blue-500 text-white py-2 px-4 rounded border-t-8 mt-4"
+                    onClick={handlePrintAll}
+                >
+                    සියලු වැටුප් පත්‍රය මුද්‍රණය කරන්න {/* Print All Pay Sheets */}
+                </button>
             </div>
             <div  className="w-1/4 p-4 sinhala-font"> {/* Apply the sinhala-font class here */}
                 <div className="ml-8">
                     <div id="paysheet-content" className="bg-white p-6 rounded-lg shadow-md">
                         {selectedEmployee ? (
                             <div className="text-gray-700">
-                                <h2 class="text-xl font-bold text-gray-800 mb-4">වැටුප් පත්‍රය - ${selectedEmployee.firstName} ${selectedEmployee.secondName}</h2>
-                                <table className="table-auto border-collapse w-full">
+                                <h2 class="text-xl font-bold text-gray-800 mb-4 center">ඩීඑම්සී පලයිවුඩ් - වැටුප් පත්‍රිකාව</h2>
+                                <table className="w-full">
                                     <thead>
                                         <tr>
-                                            <th className="border border-gray-300 p-2">ක්ෂේත‍්‍රය</th> {/* Field */}
-                                            <th className="border border-gray-300 p-2">අගය</th> {/* Value */}
+                                            <td colSpan="2" className="border border-gray-300 p-2">
+                                                <div className="flex justify-between p-2">
+                                                    <span>සේවකයාගේ නම :</span>
+                                                    <span>{`${selectedEmployee.firstName} ${selectedEmployee.secondName}`}</span>
+                                                </div>
+                                                <div className="flex justify-between p-2">
+                                                    <span>සේවක අංකය :</span>
+                                                    <span>{selectedEmployee.employeeId}</span>
+                                                </div>
+                                                <div className="flex justify-between p-2">
+                                                    <span>මාසය :</span>
+                                                    <span>{new Date().toLocaleString('default', { month: 'long' })}</span>
+                                                </div>
+                                            </td>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody className="table-auto border-collapse w-full" >
                                         <tr>
-                                            <td className="border border-gray-300 p-2"> සේවකයාගේ නම </td> {/* Employee Name */}
-                                            <td className="border border-gray-300 p-2">{`${selectedEmployee.firstName} ${selectedEmployee.secondName}`}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-gray-300 p-2"> සේවක අංකය </td> {/* Employee Number */}
-                                            <td className="border border-gray-300 p-2">{selectedEmployee.employeeId}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-gray-300 p-2"> මාසය </td> {/* Month */}
-                                            <td className="border border-gray-300 p-2">{new Date().toLocaleString('default', { month: 'long' })}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-gray-300 p-2"> කටයුතු කළ දින </td> {/* Working Days */}
+                                            <td className="border border-gray-300 p-2"> පැමිණි දිනය</td> {/* Working Days */}
                                             <td className="border border-gray-300 p-2">{selectedEmployee.workingDays}</td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">උපරිම ආදායම් </td> {/* OT Earnings */}
+                                            <td className="border border-gray-300 p-2">අතිකාල</td> {/* OT Earnings */}
                                             <td className="border border-gray-300 p-2">{selectedEmployee.OTEarning.toFixed(2)}</td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">ආදායම් ලැබීම් </td> {/* Income Allowance */}
-                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-gray-300 p-2">දුණු සංගම ආදායම් </td> {/* Double Shift Earnings */}
-                                            <td className="border border-gray-300 p-2">{selectedEmployee.doubleShiftEarning.toFixed(2)}</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border border-gray-300 p-2">ආපසුගිය භාණ්ඩ </td> {/* Attendance Allowance */}
+                                            <td className="border border-gray-300 p-2">පැමිණීමේ දීමනාව</td> {/* Income Allowance */}
                                             <td className="border border-gray-300 p-2">{(selectedEmployee.attendanceAllowance1 + selectedEmployee.attendanceAllowance2).toFixed(2)}</td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">අවදානම් භාණ්ඩ </td> {/* Risk Allowance */}
+                                            <td className="border border-gray-300 p-2">අයවැය දීමනාව </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">අමතර අත්තම් </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.doubleShiftEarning.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">දිරි දීමනාව </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">අවදානම් දීමනාව </td> {/* Income Allowance */}
                                             <td className="border border-gray-300 p-2">{(selectedEmployee.riskAllowance1 + selectedEmployee.riskAllowance2).toFixed(2)}</td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">කොළඹ භාණ්ඩ </td> {/* Colombo Allowance */}
+                                            <td className="border border-gray-300 p-2">කොළඹ </td> {/* Income Allowance */}
                                             <td className="border border-gray-300 p-2">{selectedEmployee.colomboAllowance.toFixed(2)}</td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">මුළු වැටුප </td> {/* Gross Salary */}
-                                            <td className="border border-gray-300 p-2">{selectedEmployee.grossSalary.toFixed(2)}</td>
+                                            <td className="border border-gray-300 p-2" colSpan="2"></td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">අත්‍යාවශ්‍ය දීමනා </td> {/* Advances */}
+                                            <td className="border border-gray-300 p-2"> දළ වැටුප </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{((selectedEmployee.colomboAllowance)+
+                                            (selectedEmployee.riskAllowance1 + selectedEmployee.riskAllowance2)+
+                                            (selectedEmployee.incomeAllowance)+
+                                            (selectedEmployee.doubleShiftEarning)+
+                                            (selectedEmployee.incomeAllowance)+
+                                            (selectedEmployee.attendanceAllowance1 + selectedEmployee.attendanceAllowance2)+
+                                            (selectedEmployee.OTEarning)).toFixed(2)}
+                                            <div className="border-b border-black mt-1 underline"></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2" colSpan="2"></td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">අර්ථ සාදක </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.EPF.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">අත්තිකාරම් </td> {/* Income Allowance */}
                                             <td className="border border-gray-300 p-2">
                                                 {selectedEmployee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0).toFixed(2)}
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">ණය </td> {/* Loans */}
+                                            <td className="border border-gray-300 p-2">බැංකු ගිණුම් සඳහා </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">ණය මුදල </td> {/* Income Allowance */}
                                             <td className="border border-gray-300 p-2">
                                                 {selectedEmployee.loans.reduce((total, loan) => total + loan.monthlyDeduction, 0).toFixed(2)}
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">ආහාර පරිභෝජනය </td> {/* Food Consumption */}
+                                            <td className="border border-gray-300 p-2">පසුගිය හිඟ </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">කෑම සඳහා </td> {/* Income Allowance */}
                                             <td className="border border-gray-300 p-2">
                                                 {selectedEmployee.foodConsumptionRecords.reduce((total, record) => total + record.totalAmount, 0).toFixed(2)}
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">EPF </td> {/* EPF */}
-                                            <td className="border border-gray-300 p-2">{selectedEmployee.EPF.toFixed(2)}</td>
+                                            <td className="border border-gray-300 p-2">අවුරුදු අත්තිකාරම් </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">මුළු අඩුකම් </td> {/* Total Deductions */}
+                                            <td className="border border-gray-300 p-2">රුහුනු සංවර්ධන ණය </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">රඳවා ගැනීම් </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">බෝනස් </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">සමිති </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">පොත් ණය </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">{selectedEmployee.incomeAllowance.toFixed(2)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2" colSpan="2"></td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">මුළු අඩුකිරීම් </td> {/* Income Allowance */}
                                             <td className="border border-gray-300 p-2">
                                                 {(
                                                     parseFloat(selectedEmployee.advances.reduce((total, advance) => total + advance.monthlyDeduction, 0)) +
@@ -706,8 +845,15 @@ export function ManageEmployee() {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td className="border border-gray-300 p-2">නිවැරදි වැටුප </td> {/* Net Salary */}
-                                            <td className="border border-gray-300 p-2">{selectedEmployee.netSalary.toFixed(2)}</td>
+                                            <td className="border border-gray-300 p-4" colSpan="2"></td>
+                                        </tr>
+                                        <tr>
+                                            <td className="border border-gray-300 p-2">ශුද්ධ වැටුප </td> {/* Income Allowance */}
+                                            <td className="border border-gray-300 p-2">
+                                                {selectedEmployee.netSalary.toFixed(2)}
+                                                <div className="border-b border-black mt-1 underline"></div> {/* First underline */}
+                                                <div className="border-b border-black mt-1 underline"></div> {/* Second underline */}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>

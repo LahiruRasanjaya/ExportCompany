@@ -6,7 +6,7 @@ header {
     margin: 0;
     padding: 0;
     border: none;
-    box-shadow: none; /* Ensure no shadow is applied */
+    box-shadow: none; 
     background-color: #2d3748;
 }
 
@@ -14,15 +14,17 @@ nav {
     margin: 0;
     padding: 0;
     border: none;
-    box-shadow: none; /* Ensure no shadow is applied */
-    background-color: #2d3748; /* Ensure background color is applied */
+    box-shadow: none; 
+    background-color: #2d3748; 
 }
 
 li {
     margin: 0;
     padding: 0;
     border: none;
-    box-shadow: none; /* Ensure no shadow is applied */
-     /* Ensure background color is applied */
+    box-shadow: none; 
 }
+
+
+
 

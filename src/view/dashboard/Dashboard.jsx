@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import './Dashboard.css';
 import { AddEmployee } from './modals/AddEmployee';
-import { ManageOTHours } from './modals/ManageOTHours';
+// import { ManageOTHours } from './modals/ManageOTHours';
 import { EmployeeAllowance } from './modals/EmployeeAllowance';
 import { EmployeeFoodAllowance } from './modals/EmployeeFoodAllowance';
-import { ManageJobType } from './modals/ManageJobType';
+// import { ManageJobType } from './modals/ManageJobType';
 import { AdvanceAndLoan} from './modals/AdvanceAndLoan';
 
 export function Dashboard() {
@@ -20,10 +20,6 @@ export function Dashboard() {
                 return <EmployeeAllowance />;
             case 'employee-food':
                 return <EmployeeFoodAllowance />;
-            case 'manage-ot-hours':
-                return <ManageOTHours />;
-            case 'manage-job-type':
-                return <ManageJobType />;
             default:
                 return <AddEmployee />;
         }
@@ -61,20 +57,6 @@ export function Dashboard() {
                            className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded"
                            onClick={() => setSelectedMenu('employee-food')}>
                             Employee Food
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#manage-ot-hours" 
-                           className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded"
-                           onClick={() => setSelectedMenu('manage-ot-hours')}>
-                            Manage OT Hours
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#manage-job-type" 
-                           className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded"
-                           onClick={() => setSelectedMenu('manage-job-type')}>
-                            Manage Job Type
                         </a>
                     </li>
                 </ul>

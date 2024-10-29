@@ -29,7 +29,7 @@ export function Main() {
                     Sign Out
                 </button>
             </header>
-            <nav className="list-none flex items-center parent-container
+            <nav className="list-none flex items-center parent-container nav-container
             border-b justify-end bg-gray-400">
                 <NavLink className="link" to="home">
                     <li className="p-2 border-x
@@ -58,3 +58,4 @@ export function Main() {
         </>
     );
 }
+

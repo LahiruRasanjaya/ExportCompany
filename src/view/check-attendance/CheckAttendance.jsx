@@ -117,117 +117,182 @@
 //     );
 // }
 
+// import './CheckAttendance.css';
+// import React, { useEffect, useState } from 'react';
+// import { useForm } from 'react-hook-form';
+// import { getAllEmployees, getAttendanceReportByDateRange } from '../../service/ApiServices'; // Import necessary functions
+
+// export function CheckAttendance() {
+//     const { register, handleSubmit, setFocus, formState } = useForm({
+//         mode: 'onChange',
+//     });
+
+//     const [employees, setEmployees] = useState([]);
+//     const [attendanceData, setAttendanceData] = useState([]);
+//     const [startDate, setStartDate] = useState(null);
+//     const [endDate, setEndDate] = useState(null);
+//     const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+//     const [selectedEmployeeName, setSelectedEmployeeName] = useState('');
+
+//     useEffect(() => {
+//         const fetchEmployees = async () => {
+//             const response = await getAllEmployees();
+//             setEmployees(response.data);
+//         };
+//         fetchEmployees();
+//     }, []);
+
+//     const handleViewAttendance = async (employeeId, employeeName) => {
+//         if (startDate && endDate) {
+//             try {
+//                 const response = await getAttendanceReportByDateRange(employeeId, startDate, endDate);
+//                 setAttendanceData(response.data);
+//                 setSelectedEmployeeId(employeeId);
+//                 setSelectedEmployeeName(employeeName);
+//             } catch (error) {
+//                 alert('Error fetching attendance records: ' + error.message);
+//             }
+//         } else {
+//             alert('Please select both start and end dates.');
+//         }
+//     };
+
+//     return (
+//         <div className="check-attendance" style={{ display: 'flex', height: '100vh' }}>
+//             {/* Left Panel - Employee Table */}
+//             <div className="left-panel" style={{ width: '33%', padding: '20px', overflowY: 'auto' }}>
+//                 <h2>Employees</h2>
+//                 <table className="employee-table">
+//                     <thead>
+//                         <tr>
+//                             <th>Employee Name</th>
+//                             <th>Employee ID</th>
+//                             <th>Start Date</th>
+//                             <th>End Date</th>
+//                             <th>Action</th>
+//                         </tr>
+//                     </thead>
+//                     <tbody>
+//                         {employees.map((employee) => (
+//                             <tr key={employee.employeeId}>
+//                                 <td>{employee.firstName} {employee.secondName}</td>
+//                                 <td>{employee.employeeId}</td>
+//                                 <td>
+//                                     <input
+//                                         type="date"
+//                                         onChange={(e) => setStartDate(e.target.value)}
+//                                     />
+//                                 </td>
+//                                 <td>
+//                                     <input
+//                                         type="date"
+//                                         onChange={(e) => setEndDate(e.target.value)}
+//                                     />
+//                                 </td>
+//                                 <td>
+//                                     <button onClick={() => handleViewAttendance(employee.employeeId, `${employee.firstName} ${employee.secondName}`)}>
+//                                         View Attendance
+//                                     </button>
+//                                 </td>
+//                             </tr>
+//                         ))}
+//                     </tbody>
+//                 </table>
+//             </div>
+
+//             {/* Right Panel - Attendance Records Table */}
+//             <div className="right-panel" style={{ width: '67%', padding: '20px', overflowY: 'auto' }}>
+//                 <h2>Attendance Records for {selectedEmployeeName}</h2>
+//                 {attendanceData.length > 0 ? (
+//                     <table className="attendance-table">
+//                         <thead>
+//                             <tr>
+//                                 <th>Date</th>
+//                                 <th>Status</th>
+//                                 <th>Entry Time</th>
+//                                 <th>Exit Time</th>
+//                             </tr>
+//                         </thead>
+//                         <tbody>
+//                             {attendanceData.map((record, index) => (
+//                                 <tr key={index}>
+//                                     <td>{new Date(record.date).toLocaleDateString()}</td>
+//                                     <td>{record.status}</td>
+//                                     <td>{record.entryTime ? new Date(record.entryTime).toLocaleTimeString() : 'N/A'}</td>
+//                                     <td>{record.exitTime ? new Date(record.exitTime).toLocaleTimeString() : 'N/A'}</td>
+//                                 </tr>
+//                             ))}
+//                         </tbody>
+//                     </table>
+//                 ) : (
+//                     <p>No attendance records available.</p>
+//                 )}
+//             </div>
+//         </div>
+//     );
+// }
+
+import React, { useState } from 'react';
 import './CheckAttendance.css';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { getAllEmployees, getAttendanceReportByDateRange } from '../../service/ApiServices'; // Import necessary functions
+import { PaySheetCheck } from './modals/PaySheetCheck';
+// import { ManageOTHours } from './modals/ManageOTHours';
+import { CheckEmployeeAttendance } from './modals/CheckEmployeeAttendance';
+// import { EmployeeFoodAllowance } from './modals/EmployeeFoodAllowance';
+// import { ManageJobType } from './modals/ManageJobType';
+import { ManageDilyAttendance} from './modals/ManageDilyAttendance';
 
 export function CheckAttendance() {
-    const { register, handleSubmit, setFocus, formState } = useForm({
-        mode: 'onChange',
-    });
+    const [selectedMenu, setSelectedMenu] = useState('add-employee');
 
-    const [employees, setEmployees] = useState([]);
-    const [attendanceData, setAttendanceData] = useState([]);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
-    const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
-    const [selectedEmployeeName, setSelectedEmployeeName] = useState('');
-
-    useEffect(() => {
-        const fetchEmployees = async () => {
-            const response = await getAllEmployees();
-            setEmployees(response.data);
-        };
-        fetchEmployees();
-    }, []);
-
-    const handleViewAttendance = async (employeeId, employeeName) => {
-        if (startDate && endDate) {
-            try {
-                const response = await getAttendanceReportByDateRange(employeeId, startDate, endDate);
-                setAttendanceData(response.data);
-                setSelectedEmployeeId(employeeId);
-                setSelectedEmployeeName(employeeName);
-            } catch (error) {
-                alert('Error fetching attendance records: ' + error.message);
-            }
-        } else {
-            alert('Please select both start and end dates.');
+    const renderContent = () => {
+        switch (selectedMenu) {
+            case 'pay-sheet-check':
+                return <PaySheetCheck />;
+            case 'manage-Dily-attendance':
+                return <ManageDilyAttendance />;
+            case 'check-employee-attendance':
+                return <CheckEmployeeAttendance />;
+            default:
+                return <PaySheetCheck />;
         }
     };
 
     return (
-        <div className="check-attendance" style={{ display: 'flex', height: '100vh' }}>
-            {/* Left Panel - Employee Table */}
-            <div className="left-panel" style={{ width: '33%', padding: '20px', overflowY: 'auto' }}>
-                <h2>Employees</h2>
-                <table className="employee-table">
-                    <thead>
-                        <tr>
-                            <th>Employee Name</th>
-                            <th>Employee ID</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {employees.map((employee) => (
-                            <tr key={employee.employeeId}>
-                                <td>{employee.firstName} {employee.secondName}</td>
-                                <td>{employee.employeeId}</td>
-                                <td>
-                                    <input
-                                        type="date"
-                                        onChange={(e) => setStartDate(e.target.value)}
-                                    />
-                                </td>
-                                <td>
-                                    <input
-                                        type="date"
-                                        onChange={(e) => setEndDate(e.target.value)}
-                                    />
-                                </td>
-                                <td>
-                                    <button onClick={() => handleViewAttendance(employee.employeeId, `${employee.firstName} ${employee.secondName}`)}>
-                                        View Attendance
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+        <div className="main-content">
+            {/* Sidebar */}
+            <aside className="sidebar">
+                <h2 className="text-xl font-bold mb-4">Attendance Management</h2>
+                <ul className="space-y-2">
+                    <li>
+                        <a href="#pay-sheet-check" 
+                           className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded"
+                           onClick={() => setSelectedMenu('pay-sheet-check')}>
+                            Check Last Months Paysheets
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#manage-Dily-attendance" 
+                           className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded"
+                           onClick={() => setSelectedMenu('manage-Dily-attendance')}>
+                            Manage Employee Attendance
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#check-employee-attendance" 
+                           className="block px-4 py-2 text-blue-700 hover:bg-blue-100 rounded"
+                           onClick={() => setSelectedMenu('check-employee-attendance')}>
+                            Check Employee Attendance
+                        </a>
+                    </li>
+                </ul>
+            </aside>
 
-            {/* Right Panel - Attendance Records Table */}
-            <div className="right-panel" style={{ width: '67%', padding: '20px', overflowY: 'auto' }}>
-                <h2>Attendance Records for {selectedEmployeeName}</h2>
-                {attendanceData.length > 0 ? (
-                    <table className="attendance-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Entry Time</th>
-                                <th>Exit Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {attendanceData.map((record, index) => (
-                                <tr key={index}>
-                                    <td>{new Date(record.date).toLocaleDateString()}</td>
-                                    <td>{record.status}</td>
-                                    <td>{record.entryTime ? new Date(record.entryTime).toLocaleTimeString() : 'N/A'}</td>
-                                    <td>{record.exitTime ? new Date(record.exitTime).toLocaleTimeString() : 'N/A'}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                ) : (
-                    <p>No attendance records available.</p>
-                )}
-            </div>
+            {/* Main Content */}
+            <main className="main-area">
+                {renderContent()}
+            </main>
         </div>
     );
 }
+
+

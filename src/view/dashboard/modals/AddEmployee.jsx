@@ -200,6 +200,65 @@ export function AddEmployee() {
         }
     };
 
+    const exportToExcel = () => {
+        // Create a new workbook
+        const workbook = XLSX.utils.book_new();
+    
+        // Prepare employee data
+        const worksheetData = employees.map(employee => ({
+            employeeId: employee.employeeId,
+            Name: `${employee.firstName} ${employee.secondName}`,
+            entryTime: new Date(1970, 0, 1, 8, 30, 0), // Local time 08:30 AM
+            exitTime: employee.department,
+            status: 'Present', // Default value
+        }));
+    
+        // Create the worksheet
+        const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    
+        // Format the entryTime column as time (C column)
+        const entryTimeColumn = 'C'; // Assuming entryTime is in column C
+        for (let i = 2; i <= employees.length + 1; i++) { // Start from row 2
+            const cellRef = `${entryTimeColumn}${i}`;
+            if (!worksheet[cellRef]) {
+                worksheet[cellRef] = {};
+            }
+    
+            // Set the type as 'n' for number (Excel date/time)
+            worksheet[cellRef].t = 'n';
+            
+            // Set the value to the correct time in Excel date format
+            const entryDate = new Date(1970, 0, 1, 8, 30, 0); // This represents 08:30 AM on January 1, 1970
+            worksheet[cellRef].v = (entryDate - new Date(1970, 0, 1)) / (1000 * 60 * 60 * 24); // Convert to Excel date format
+    
+            // Set the number format to show as time (hh:mm:ss AM/PM)
+            worksheet[cellRef].z = 'hh:mm:ss AM/PM';
+        }
+    
+        // Define data validation for the "status" column (E2 and down)
+        const validation = {
+            sqref: 'E2:E' + (employees.length + 1), // Apply to E2 to E(number of employees + 1)
+            type: 'list',
+            formula1: '"Present,Absent"', // The options available
+            showErrorMessage: true,
+            errorTitle: 'Invalid selection',
+            error: 'Please select Present or Absent from the list.',
+        };
+    
+        // Ensure the data validation is added to the worksheet
+        if (!worksheet['!dataValidation']) {
+            worksheet['!dataValidation'] = [];
+        }
+        worksheet['!dataValidation'].push(validation);
+    
+        // Append the worksheet to the workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Employees');
+    
+        // Generate and download the Excel file
+        XLSX.writeFile(workbook, 'EmployeeData.xlsx');
+    };
+    
+    
     return (
         <div className="relative">
             {/* Left Side: Add Employee Form */}
@@ -360,6 +419,11 @@ export function AddEmployee() {
             {/* Table to display employees */}
             <div className="mt-8">
                 <h2 className="text-2xl font-bold mb-4">Employee List</h2>
+                <div className="flex justify-end mb-4">
+                    <button className="bg-blue-500 text-white py-2 px-4 rounded mr-2" onClick={exportToExcel}>
+                        Export to Excel
+                    </button>
+                </div>{/* Export Button */}
                 <table className="w-full table-auto border-collapse rounded-lg shadow-lg">
                     <thead className="bg-orange-100">
                         <tr>

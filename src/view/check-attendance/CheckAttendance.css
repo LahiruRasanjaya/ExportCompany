@@ -1,4 +1,4 @@
-.check-attendance {
+/* .check-attendance {
     display: flex;
     height: 100vh;
 }
@@ -7,8 +7,8 @@
     width: 33%;
     padding: 20px;
     overflow-y: auto;
-    border-right: 1px solid #ddd; /* Optional: add a separator between the panels */
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Optional: add shadow for better separation */
+    border-right: 1px solid #ddd; 
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1); 
 }
 
 .right-panel {
@@ -44,4 +44,73 @@ button {
 
 button:hover {
     background-color: #45a049;
+} */
+
+html, body, #root, .Dashboard {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
 }
+
+/* Overall container for the header, nav, and main content */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+}
+
+/* Header styling */
+header {
+    flex-shrink: 0; /* Prevents the header from shrinking */
+}
+
+/* Navbar styling */
+nav {
+    flex-shrink: 0; /* Prevents the navbar from shrinking */
+}
+
+/* Main content area, including the sidebar and main content */
+.main-content {
+    display: flex;
+    flex: 1; /* Takes up remaining space */
+    overflow: hidden; /* Prevents overflowing of content */
+}
+
+/* Sidebar styles */
+.sidebar {
+    width: 16rem; /* Fixed width for the sidebar */
+    background-color: #2d3748; /* Dark gray background */
+    color: #ffffff; /* White text color */
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+/* Sidebar link styling */
+.sidebar a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #ffffff; /* White text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 0.25rem; /* Rounded corners */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for hover effects */
+    font-family: 'Roboto', sans-serif; /* Font style */
+}
+
+.sidebar a:hover {
+    background-color: #3182ce; /* Shining blue background on hover */
+    color: #ffffff; /* Ensure text remains white on hover */
+}
+
+/* Main content area next to the sidebar */
+.main-area {
+    flex: 1;
+    padding: 1rem;
+    background-color: #f7fafc;
+    overflow-y: auto;
+}
+
+.space-y-2 > * + * {
+    margin-top: 0.5rem; /* Spacing between sidebar items */
+}
+

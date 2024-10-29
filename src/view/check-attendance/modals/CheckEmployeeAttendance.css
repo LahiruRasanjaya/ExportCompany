@@ -1,0 +1,19 @@
+.status-present {
+    background-color: #22C55E; /* Green for Present */
+    color: white;
+}
+
+.status-absent {
+    background-color: #EF4444; /* Red for Absent */
+    color: white;
+}
+
+.status-server-down {
+    background-color: #FCD34D; /* Yellow for Server Down */
+    color: black;
+}
+
+.status-default {
+    background-color: rgb(202, 202, 197); /* Default color */
+    color: black;
+}

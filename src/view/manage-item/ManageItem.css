@@ -6,3 +6,14 @@
 .specialDate-row {
     background-color: #ddf3aa; /* Light red background to indicate absence */
 }
+
+.time-side-background {
+    background-image: url('../../assets/images/time.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: brightness(2); /* Make the image slightly darker */
+    width: 100%;
+    height: 100vh;
+
+}
